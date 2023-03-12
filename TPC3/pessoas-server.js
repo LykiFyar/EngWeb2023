@@ -7,7 +7,7 @@ http.createServer(function (req, res) {
     var d = new Date().toISOString().substring(0,16)
     console.log(req.method + " " + req.url + " " + d)
 
-    if(req.url == '/pessoas') {
+    if(req.url == '/pessoas' || req.url == "/") {
         axios.get('http://localhost:3000/pessoas')
             .then(function(resp) { // callback se conseguir fazer o pedido
                 var pessoas = resp.data
@@ -50,6 +50,7 @@ http.createServer(function (req, res) {
                 res.end('<p>Erro na obtenção de dados: ' + erro + '</p>')
             })
     }
+    
     else if(req.url.match(/w3\.css$/)) {
         fs.readFile("w3.css", function(erro,dados) {
             if(erro) {
@@ -61,6 +62,90 @@ http.createServer(function (req, res) {
                 res.end(dados)
             }
         })
+    }
+    else if(req.url == "/pessoas/sexo") {
+        console.log('Pedindo ' + req.url.substring(9))
+        axios.get('http://localhost:3000/pessoas/')
+            .then(function(resp) { // callback se conseguir fazer o pedido
+                var pessoas = resp.data
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end(mypages.genSexDistPage(pessoas, d))
+            })
+            .catch(erro => { // callback se não conseguir fazer o pedido
+                console.log('Erro: ' + erro)
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end('<p>Erro na obtenção de dados: ' + erro + '</p>')
+            })
+    }
+    else if(req.url.match(/\/pessoas\/sexo\/\w+/)) {
+        console.log('Pedindo ' + req.url.substring(9))
+        axios.get('http://localhost:3000/pessoas?sexo=' + req.url.substring(14))
+            .then(function(resp) { // callback se conseguir fazer o pedido
+                var pessoas = resp.data
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end(mypages.genSexListPage(pessoas,req.url.substring(14), d))
+            })
+            .catch(erro => { // callback se não conseguir fazer o pedido
+                console.log('Erro: ' + erro)
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end('<p>Erro na obtenção de dados: ' + erro + '</p>')
+            })
+    }
+    else if(req.url == "/pessoas/desporto") {
+        console.log('Pedindo ' + req.url.substring(9))
+        axios.get('http://localhost:3000/pessoas/')
+            .then(function(resp) { // callback se conseguir fazer o pedido
+                var pessoas = resp.data
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end(mypages.genSportDistPage(pessoas, d))
+            })
+            .catch(erro => { // callback se não conseguir fazer o pedido
+                console.log('Erro: ' + erro)
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end('<p>Erro na obtenção de dados: ' + erro + '</p>')
+            })
+    }
+    else if(req.url.match(/\/pessoas\/desporto\/\w+/)) {
+        console.log('Pedindo ' + req.url.substring(9))
+        axios.get('http://localhost:3000/pessoas')
+            .then(function(resp) { // callback se conseguir fazer o pedido
+                var pessoas = resp.data
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end(mypages.genSportListPage(pessoas,req.url.substring(18), d))
+            })
+            .catch(erro => { // callback se não conseguir fazer o pedido
+                console.log('Erro: ' + erro)
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end('<p>Erro na obtenção de dados: ' + erro + '</p>')
+            })
+    }
+    else if(req.url == "/pessoas/profissoes") {
+        console.log('Pedindo ' + req.url.substring(9))
+        axios.get('http://localhost:3000/pessoas/')
+            .then(function(resp) { // callback se conseguir fazer o pedido
+                var pessoas = resp.data
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end(mypages.genJobDistPage(pessoas, d))
+            })
+            .catch(erro => { // callback se não conseguir fazer o pedido
+                console.log('Erro: ' + erro)
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end('<p>Erro na obtenção de dados: ' + erro + '</p>')
+            })
+    }
+    else if(req.url.match(/\/pessoas\/profissoes\/\w+/)) {
+        console.log('Pedindo ' + req.url.substring(9))
+        axios.get('http://localhost:3000/pessoas?profissao=' + req.url.substring(20))
+            .then(function(resp) { // callback se conseguir fazer o pedido
+                var pessoas = resp.data
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end(mypages.genJobListPage(pessoas,req.url.substring(20), d))
+            })
+            .catch(erro => { // callback se não conseguir fazer o pedido
+                console.log('Erro: ' + erro)
+                res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'} )
+                res.end('<p>Erro na obtenção de dados: ' + erro + '</p>')
+            })
     }
     else {
         res.writeHead(404, {'Content-Type': 'text/html; charset=utf-8'} )
