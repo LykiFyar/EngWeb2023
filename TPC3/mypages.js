@@ -85,7 +85,7 @@ exports.genPersonPage = function(p,d) {
                         <li><b>Distrito: </b>${p.morada.distrito}</li>
                         <li><b>BI/CC: </b>${p.BI || p.CC}</li>
                         <li><b>Profissão: </b>${p.profissao}</li>
-                        <li><b>Desportos: </b>
+                        <li><b>Desportos: </b>z
                             <ul class="w3-ul w3-card-4">
                         `
         for(sport of p.desportos) {
