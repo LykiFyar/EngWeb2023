@@ -1,0 +1,18 @@
+{
+    "tasks": [
+        {
+            "id": 1,
+            "name": "Something",
+            "description": "smth",
+            "is_done": 0,
+            "duedate": 0
+        },
+        {
+            "id": 2,
+            "name": "Somethiweittng",
+            "description": "bitch",
+            "is_done": 1,
+            "duedate": "2021-02-12"
+        }
+    ] 
+}
