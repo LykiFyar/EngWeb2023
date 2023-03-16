@@ -1,5 +1,5 @@
 
-exports.generatePage = function(list, idTask, d) {
+exports.generatePage = function(list, changeMessage, d) {
     var pagHTML = `
     <!DOCTYPE html>
     <html>
@@ -21,12 +21,10 @@ exports.generatePage = function(list, idTask, d) {
                     <form class="w3-container" method="POST">
                         <fieldset display="none">
                             <legend>Create task</legend>
-                            <label>ID</label>
-                            <input class="w3-input w3-round" type="text" name="id"/>
                             <label>Task</label>
-                            <input class="w3-input w3-round" type="text" name="name"/>
+                            <input class="w3-input w3-round" type="text" name="what"/>
                             <label>Agent</label>
-                            <input class="w3-input w3-round" type="text" name="description"/>
+                            <input class="w3-input w3-round" type="text" name="who"/>
                             <label>Due Date</label>
                             <input class="w3-input w3-round" type="date" name="duedate"/>
                         </fieldset> 
@@ -34,24 +32,11 @@ exports.generatePage = function(list, idTask, d) {
                         <button class="w3-btn w3-purple w3-mb-2" type="submit">Register</button>
                     </form>
                 </div>
-                <!--View task-->
+                <!--View change-->
                 <div class="w3-container">
-                    `
-    
-    task = list.find(x => x.id == idTask)
-    if(task != undefined) {
-        pagHTML += `
-        
-        ` 
-    }
-    else if(idTask != "") {
-        pagHTML += `
-        <p align="center">.task not found</p>
-        `
-    }
-
-
-               pagHTML += `
+                `
+    pagHTML += changeMessage 
+    pagHTML += `
                 </div>
                 <!--List tasks-->
                 <div class="w3-container">
@@ -81,7 +66,7 @@ exports.generatePage = function(list, idTask, d) {
                             <h3 class="w3-center">tasks .done</h3>
                             <table class="w3-table-all">
                                 <tr>
-                                    <th>Task</th><th>Agent</th><th>Ações</th>
+                                    <th>Task</th><th>Agent</th><th>Due Date</th><th>Ações</th>
                                 </tr>
                         `
     for(let i = 0; i < list.length; i++) {
@@ -90,6 +75,7 @@ exports.generatePage = function(list, idTask, d) {
             <tr>
                 <td><a  href="/">${list[i].what}</a></td>
                 <td>${list[i].who}</td>
+                <td>${list[i].duedate}</td>
                 <td>[<a href="/tasks/edit/${list[i].id}">Edit</a>][<a href="/tasks/undone/${list[i].id}">Undone</a>]</td>
             </tr>
         `}

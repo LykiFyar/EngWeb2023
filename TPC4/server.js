@@ -1,9 +1,24 @@
-var axios = require('axios')
 var http = require('http')
+var axios = require('axios')
 var templates = require('./templates')
-var static = require('./static')
+var static = require('./static.js')
+const { parse } = require('querystring');
 
-
+// Aux functions
+function collectRequestBodyData(request, callback) {
+    if(request.headers['content-type'] === 'application/x-www-form-urlencoded') {
+        let body = '';
+        request.on('data', chunk => {
+            body += chunk.toString();
+        });
+        request.on('end', () => {
+            callback(parse(body));
+        });
+    }
+    else {
+        callback(null);
+    }
+}
 
 var server = http.createServer(function (req, res) {
     // Logger: what was requested and when it was requested
@@ -89,15 +104,25 @@ var server = http.createServer(function (req, res) {
                 }
                 break
             case "POST":
-                if(req.url == '/alunos/registo'){
+                if(req.url == '/'){
                     collectRequestBodyData(req,result => {
                         if (result) {
-                            axios.post('http://localhost:3000/alunos',result)
+                            axios.post('http://localhost:3000/tasks',result)
                                 .then(resp => {
                                     console.log(resp.data);
-                                    res.writeHead(201, {'Content-Type': 'text/html;charset=utf-8'})
-                                    // página de confirmação
-                                    res.end('<p>Registo inserido:' + JSON.stringify(resp.data) + ' </p>')
+                                    axios.get("http://localhost:3000/tasks")
+                                        .then(response => {
+                                            var tasks = response.data
+                                            // Render page with the tasks list
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write(templates.generatePage(tasks, '<p>Registo inserido:' + JSON.stringify(resp.data) + ' </p>', d))
+                                            res.end()
+                                        })
+                                        .catch(function(erro){
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write("<p>Não foi possível obter a lista de tasks... Erro: " + erro)
+                                            res.end()
+                                        })
                                 }).catch(error => {
                                     console.log('Erro: ' + error);
                                     res.writeHead(500, {'Content-Type': 'text/html;charset=utf-8'})
