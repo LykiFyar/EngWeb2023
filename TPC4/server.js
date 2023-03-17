@@ -44,57 +44,121 @@ var server = http.createServer(function (req, res) {
                         })
                         .catch(function(erro){
                             res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                            res.write("<p>Não foi possível obter a lista de tasks... Erro: " + erro)
+                            res.write(templates.errorPage("Não foi possível obter a lista de tasks... Erro: " + erro, d))
                             res.end()
                         })
                 }
-                // GET /tasks/:id --------------------------------------------------------------------
-                else if(/\/tasks\/[0-9]+$/i.test(req.url)){
-                    var idTask = req.url.split("/")[2]
-                    axios.get("http://localhost:3000/tasks")
-                        .then( response => {
-                            var tasks = response.data
-                            // Add code to render page with the task record
-                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                            res.end(templates.generatePage(tasks,idTask, d))
-                        })
-                }
-                // GET /alunos/registo --------------------------------------------------------------------
-                else if(req.url == "/alunos/registo"){
-                    // Add code to render page with the student form
-                    res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                    res.write(templates.studentFormPage(d))
-                    res.end()
-                }
-                // GET /alunos/edit/:id --------------------------------------------------------------------
-                else if(/\/alunos\/edit\/(A|PG)[0-9]+$/i.test(req.url)){
-                    var idAluno = req.url.split("/")[3] // "/alunos/edit/A4140" -> ['','alunos','edit','A4140']
+                // GET /tasks/done/:id --------------------------------------------------------------------
+                else if(/\/tasks\/done\/[^\/]+$/.test(req.url)){
+                    var idTask = req.url.split("/")[3] // "/alunos/edit/A4140" -> ['','alunos','edit','A4140']
                     // get aluno record
-                    axios.get("http://localhost:3000/alunos/" + idAluno)
+                    axios.get("http://localhost:3000/tasks/" + idTask)
                         .then( resp => {
-                            var aluno = resp.data
-                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                            res.end(templates.studentFormEditPage(aluno,d))
+                            var task = resp.data
+                            task.is_done = true
+                            axios.put('http://localhost:3000/tasks/' + task.id,task)
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    axios.get("http://localhost:3000/tasks")
+                                        .then(response => {
+                                            var tasks = response.data
+                                            // Render page with the tasks list
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write(templates.generatePage(tasks, "", d))
+                                            res.end()
+                                        })
+                                        .catch(function(erro){
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write(templates.errorPage("Não foi possível obter a lista de tasks... Erro: " + erro, d))
+                                            res.end()
+                                        })
+                                }).catch(error => {
+                                    console.log('Erro: ' + error);
+                                    res.writeHead(500, {'Content-Type': 'text/html;charset=utf-8'})
+                                    // página de erro
+                                    res.end(templates.errorPage("Unable to update record...", d))
+                                });
                         })
                         .catch(erro => {
                             console.log("Erro: " + erro)
                             res.writeHead(404, {'Content-Type': 'text/html;charset=utf-8'})
-                            res.end(templates.errorPage("Unable to collect record: " + idAluno, d))
+                            res.end(templates.errorPage("Unable to collect record: " + idTask, d))
                         })
                 }
-                // GET /alunos/delete/:id --------------------------------------------------------------------
-                else if(/\/alunos\/delete\/(A|PG)[0-9]+$/i.test(req.url)){
-                    var idAluno = req.url.split("/")[3] // "/alunos/edit/A4140" -> ['','alunos','edit','A4140']
-                    axios.delete('http://localhost:3000/alunos/' + idAluno)
+                // GET /tasks/undone/:id --------------------------------------------------------------------
+                else if(/\/tasks\/undone\/[^\/]+$/.test(req.url)){
+                    var idTask = req.url.split("/")[3] // "/alunos/edit/A4140" -> ['','alunos','edit','A4140']
+                    // get task record
+                    axios.get("http://localhost:3000/tasks/" + idTask)
+                        .then( resp => {
+                            var task = resp.data
+                            delete task.is_done
+                            axios.put('http://localhost:3000/tasks/' + task.id,task)
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    axios.get("http://localhost:3000/tasks")
+                                        .then(response => {
+                                            var tasks = response.data
+                                            // Render page with the tasks list
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write(templates.generatePage(tasks, "", d))
+                                            res.end()
+                                        })
+                                        .catch(function(erro){
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write(templates.errorPage("Não foi possível obter a lista de tasks... Erro: " + erro, d))
+                                            res.end()
+                                        })
+                                }).catch(error => {
+                                    console.log('Erro: ' + error);
+                                    res.writeHead(500, {'Content-Type': 'text/html;charset=utf-8'})
+                                    // página de erro
+                                    res.end(templates.errorPage("Unable to update record...", d))
+                                });
+                        })
+                        .catch(erro => {
+                            console.log("Erro: " + erro)
+                            res.writeHead(404, {'Content-Type': 'text/html;charset=utf-8'})
+                            res.end(templates.errorPage("Unable to collect record: " + idTask, d))
+                        })
+                }
+                else if(/\/tasks\/edit\/[^\/]+$/.test(req.url)){
+                    var idTask = req.url.split("/")[3]
+                    // get aluno record
+                    axios.get("http://localhost:3000/tasks")
+                        .then(response => {
+                            var tasks = response.data
+                            // Render page with the tasks list
+                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                            res.end(templates.generatePage(tasks, "", d, idTask))
+                        })
+                        .catch(function(erro){
+                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                            res.write(templates.errorPage("Não foi possível obter a lista de tasks... Erro: " + erro, d))
+                            res.end()
+                        })
+                }
+                // GET /tasks/delete/:id --------------------------------------------------------------------
+                else if(/\/tasks\/delete\/[^\/]+$/i.test(req.url)){
+                    var idTask = req.url.split("/")[3] // "/tasks/edit/A4140" -> ['','tasks','edit','A4140']
+                    axios.delete('http://localhost:3000/tasks/' + idTask)
                         .then(resp => {
-                            console.log("Delete" + idAluno + " :: " + resp.status);
-                            res.writeHead(201, {'Content-Type': 'text/html;charset=utf-8'})
-                            // página de confirmação
-                            res.end('<p>Registo apagado:' + idAluno + ' </p>')
+                            console.log("Delete" + idTask + " :: " + resp.status);
+                            axios.get("http://localhost:3000/tasks")
+                                .then(response => {
+                                    var tasks = response.data
+                                    // Render page with the tasks list
+                                    res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                    res.end(templates.generatePage(tasks, 'Registo apagado:' + idTask, d))
+                                })
+                                .catch(function(erro){
+                                    res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                    res.end(templates.errorPage("Não foi possível obter a lista de tasks... Erro: " + erro, d))
+                                })
                         }).catch(error => {
                             console.log('Erro: ' + error);
                             res.writeHead(404, {'Content-Type': 'text/html;charset=utf-8'})
-                            res.end(templates.errorPage("Unable to delete record: " + idAluno, d))
+                            res.end(templates.errorPage("Unable to delete record: " + idTask, d))
                     })
                 }
                 else{
@@ -104,7 +168,7 @@ var server = http.createServer(function (req, res) {
                 }
                 break
             case "POST":
-                if(req.url == '/'){
+                if(req.url == '/' || req.url == '/tasks'){
                     collectRequestBodyData(req,result => {
                         if (result) {
                             axios.post('http://localhost:3000/tasks',result)
@@ -115,7 +179,7 @@ var server = http.createServer(function (req, res) {
                                             var tasks = response.data
                                             // Render page with the tasks list
                                             res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                                            res.write(templates.generatePage(tasks, '<p>Registo inserido:' + JSON.stringify(resp.data) + ' </p>', d))
+                                            res.write(templates.generatePage(tasks, 'Registo inserido:' + JSON.stringify(resp.data), d))
                                             res.end()
                                         })
                                         .catch(function(erro){
@@ -138,16 +202,28 @@ var server = http.createServer(function (req, res) {
                     })
                     
                 }
-                else if(/\/alunos\/edit\/(A|PG)[0-9]+$/i.test(req.url)){
+                else if(/\/tasks\/edit\/[^\/]+$/.test(req.url)){
                     collectRequestBodyData(req, result => {
                         if(result) {
                             console.dir(result)
-                            axios.put('http://localhost:3000/alunos/' + result.id,result)
+                            axios.put('http://localhost:3000/tasks/' + result.id,result)
                                 .then(resp => {
                                     console.log(resp.data);
-                                    res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-                                    // página de confirmação
-                                    res.end('<p>Registo alterado:' + JSON.stringify(resp.data) + ' </p>')
+                                    idTask = resp.data.id
+                                    axios.get("http://localhost:3000/tasks")
+                                        .then(response => {
+                                            var tasks = response.data
+                                            console.log("fiz qualquer coisa")
+                                            // Render page with the tasks list
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write(templates.generatePage(tasks, 'Registo alterado:' + JSON.stringify(resp.data), d))
+                                            res.end()
+                                        })
+                                        .catch(function(erro){
+                                            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+                                            res.write("<p>Não foi possível obter a lista de tasks... Erro: " + erro)
+                                            res.end()
+                                        })
                                 }).catch(error => {
                                     console.log('Erro: ' + error);
                                     res.writeHead(500, {'Content-Type': 'text/html;charset=utf-8'})

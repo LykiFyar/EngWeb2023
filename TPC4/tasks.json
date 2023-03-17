@@ -1,66 +1,31 @@
 {
   "tasks": [
     {
+      "what": "arrumar o quarto",
+      "who": "Lyki",
+      "duedate": "2023-03-19",
       "id": 1,
-      "what": "Something",
-      "who": "smth",
-      "is_done": 0,
-      "duedate": 0
+      "is_done": true
     },
     {
+      "what": "montar o pc",
+      "who": "Lyki",
+      "duedate": "2023-03-26",
       "id": 2,
-      "what": "Somethiweittng",
-      "who": "bitch",
-      "is_done": 1,
-      "duedate": "2021-02-12"
+      "is_done": false
     },
     {
-      "id": "124",
-      "what": "twitch",
-      "who": "howdy",
-      "duedate": "2023-03-02"
+      "what": "chegar a ascendant",
+      "who": "Lyki",
+      "duedate": "2023-04-16",
+      "id": 3,
+      "is_done": true
     },
     {
-      "id": "234",
-      "what": "twitch",
-      "who": "howdy",
-      "duedate": "2023-03-15"
-    },
-    {
-      "id": "Q6pu2-i",
-      "what": "peter griffin",
-      "who": "",
-      "duedate": ""
-    },
-    {
-      "what": "qeq",
-      "who": "qwrwe",
-      "duedate": "",
-      "id": "w22Bs3p"
-    },
-    {
-      "what": "wr",
-      "who": "asfs",
-      "duedate": "",
-      "id": "-e5lGKT"
-    },
-    {
-      "what": "",
-      "who": "",
-      "duedate": "",
-      "id": "hbpkNeX"
-    },
-    {
-      "what": "",
-      "who": "",
-      "duedate": "",
-      "id": "tw2iSl5"
-    },
-    {
-      "what": "",
-      "who": "",
-      "duedate": "",
-      "id": "DuLPmEx"
+      "what": "acabar o tpc4 de EW",
+      "who": "Lyki",
+      "duedate": "2023-03-17",
+      "id": 4
     }
   ]
 }
