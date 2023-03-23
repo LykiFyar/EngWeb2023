@@ -1,0 +1,73 @@
+extends layout
+
+block content
+  .w3-card-4
+    header.w3-container.w3-orange
+      h1 Task Manager
+    .w3-container
+      form.w3-container(method="POST" action="/")
+        fieldset(display="none")
+          legend Create task
+          label Task
+          input.w3-input.w3-round(type="text" name="what")
+          label Agent
+          input.w3-input.w3-round(type="text" name="who")
+          label Due Date</label>
+          input.w3-input.w3-round(type="date" name="duedate")
+        br
+        button.w3-btn.w3-amber.w3-mb-2(type="submit") Register
+
+    each task in list
+      if task.id == idTask
+        .w3-container
+          form.w3-container.w3-section(method="POST" action="/tasks/edit/"+task.id)
+            fieldset(display="none")
+              legend Edit task
+              label Task
+              input.w3-input.w3-round(type="text" name="what" value=task.what)
+              label Agent
+              input.w3-input.w3-round(type="text" name="who" value=task.who)
+              label Due Date
+              input.w3-input.w3-round(type="date" name="duedate" value=task.duedate)
+              input(type="hidden" name="id" value=task.id)
+              input(type="hidden" name="is_done" value=task.is_done)
+            br
+            button.w3-btn.w3-yellow.w3-mb-2(type="submit") Edit
+    p(align="center") #{msg}
+    .w3-container
+      .w3-row
+        .w3-col.s6
+          h3.w3-center #[b tasks .todo]
+            table.w3-table-all
+              tr
+                th Task 
+                th Agent
+                th Due Date
+                th Actions
+                        
+              each t in list
+                if (!(t.is_done))
+                  tr
+                    td=t.what
+                    td=t.who
+                    td=t.duedate
+                    td #[a(href="/tasks/edit/"+t.id) #[button.w3-btn.w3-yellow.w3-mb-2.w3-round.w3-padding-small.w3-margin-right(type="button") Edit]]#[a(href="/tasks/delete/"+t.id) #[button.w3-btn.w3-red.w3-mb-2.w3-round.w3-padding-small.w3-margin-right(type="button") Delete]] #[a(href="/tasks/done/"+t.id) #[button.w3-btn.w3-green.w3-mb-2.w3-round.w3-padding-small(type="button") Done]]
+        .w3-col.s6
+          h3.w3-center #[b tasks .done]
+            table.w3-table-all
+              tr
+                th Task 
+                th Agent
+                th Due Date
+                th Actions
+
+              each t in list
+                if (t.is_done)
+                  tr
+                    td=t.what
+                    td=t.who
+                    td=t.duedate
+                    td #[a(href="/tasks/edit/"+t.id) #[button.w3-btn.w3-yellow.w3-mb-2.w3-round.w3-padding-small.w3-margin-right(type="button") Edit]] #[a(href="/tasks/delete/"+t.id) #[button.w3-btn.w3-red.w3-mb-2.w3-round.w3-padding-small.w3-margin-right(type="button") Delete]] #[a(href="/tasks/undone/"+t.id) #[button.w3-btn.w3-blue.w3-mb-2.w3-round.w3-padding-small(type="button") Undone]]
+                
+    footer.w3-container.w3-deep-orange
+      h5(align="center") Made by #[a(href="http://www.github.com/LykiFyar") LykiFyar] - Generated for EngWeb2023 in #{d}
