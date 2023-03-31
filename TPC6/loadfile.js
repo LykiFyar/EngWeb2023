@@ -9,7 +9,7 @@ fs.readFile("./dataset-extra1.json", "utf8", (err, jsonString) => {
   try {
     const json = JSON.parse(jsonString);
     for(let i = 0; i < json.pessoas.length; i++) {
-        axios.post('http://localhost:3000/tasks',json.pessoas[i])
+        axios.post('http://localhost:3000/pessoas',json.pessoas[i])
             .then(resp => {
                 console.log("Added registry with id: " + json.pessoas[i]._id)
             })
